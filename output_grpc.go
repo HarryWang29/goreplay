@@ -38,6 +38,7 @@ type GrpcOutputConfig struct {
 	Token      string        `json:"token"`
 	PassiveID  uint32        `json:"passive_id"`
 	PassiveIDu uint          `json:"passive_id_u"`
+	TicketTime time.Duration `json:"ticket_time"`
 }
 
 type RR struct {
@@ -131,7 +132,7 @@ func NewGrpcOutput(address string, config *GrpcOutputConfig) PluginWriter {
 }
 
 func (o *GrpcOutput) work() {
-	ticker := time.Tick(2 * time.Second)
+	ticker := time.Tick(o.config.TicketTime)
 	for {
 		select {
 		case <-ticker:

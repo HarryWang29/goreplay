@@ -276,6 +276,7 @@ func init() {
 	flag.StringVar(&Settings.OutputGrpcConfig.AgentID, "output-grpc-agent-id", "", "")
 	flag.StringVar(&Settings.OutputGrpcConfig.Token, "output-grpc-token", "", "")
 	flag.UintVar(&Settings.OutputGrpcConfig.PassiveIDu, "output-grpc-passive-id", 0, "")
+	flag.DurationVar(&Settings.OutputGrpcConfig.TicketTime, "output-grpc-ticket-time", 2*time.Second, "")
 
 	// default values, using for tests
 	Settings.OutputFileConfig.SizeLimit = 33554432
