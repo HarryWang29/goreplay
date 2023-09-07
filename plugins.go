@@ -117,6 +117,10 @@ func NewPlugins() *InOutPlugins {
 		plugins.registerPlugin(NewTCPOutput, options, &Settings.OutputTCPConfig)
 	}
 
+	if Settings.OutputGrpc != "" {
+		plugins.registerPlugin(NewGrpcOutput, Settings.OutputGrpc, &Settings.OutputGrpcConfig)
+	}
+
 	for _, options := range Settings.OutputWebSocket {
 		plugins.registerPlugin(NewWebSocketOutput, options, &Settings.OutputWebSocketConfig)
 	}

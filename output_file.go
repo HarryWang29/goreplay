@@ -73,7 +73,8 @@ type FileOutput struct {
 	currentFileSize int
 	totalFileSize   size.Size
 
-	config *FileOutputConfig
+	config    *FileOutputConfig
+	recvCount int64
 }
 
 // NewFileOutput constructor for FileOutput, accepts path
@@ -211,6 +212,7 @@ func (o *FileOutput) updateName() {
 
 // PluginWrite writes message to this plugin
 func (o *FileOutput) PluginWrite(msg *Message) (n int, err error) {
+	o.recvCount++
 	if o.requestPerFile {
 		o.Lock()
 		meta := payloadMeta(msg.Meta)

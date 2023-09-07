@@ -94,6 +94,9 @@ type AppSettings struct {
 	OutputFile         []string      `json:"output-file"`
 	OutputFileConfig   FileOutputConfig
 
+	OutputGrpc       string `json:"output_grpc"`
+	OutputGrpcConfig GrpcOutputConfig
+
 	InputRAW       []string `json:"input_raw"`
 	InputRAWConfig RAWInputConfig
 
@@ -267,6 +270,12 @@ func init() {
 	flag.Var(&Settings.ModifierConfig.HeaderBasicAuthFilters, "http-basic-auth-filter", "A regexp to match the decoded basic auth string against. Requests with non-matching headers will be dropped:\n\t gor --input-raw :8080 --output-http staging.com --http-basic-auth-filter \"^customer[0-9].*\"")
 	flag.Var(&Settings.ModifierConfig.HeaderHashFilters, "http-header-limiter", "Takes a fraction of requests, consistently taking or rejecting a request based on the FNV32-1A hash of a specific header:\n\t gor --input-raw :8080 --output-http staging.com --http-header-limiter user-id:25%")
 	flag.Var(&Settings.ModifierConfig.ParamHashFilters, "http-param-limiter", "Takes a fraction of requests, consistently taking or rejecting a request based on the FNV32-1A hash of a specific GET param:\n\t gor --input-raw :8080 --output-http staging.com --http-param-limiter user_id:25%")
+
+	flag.StringVar(&Settings.OutputGrpc, "output-grpc-host", "", "")
+	flag.DurationVar(&Settings.OutputGrpcConfig.ErrWait, "output-grpc-err-wait", 3*time.Second, "")
+	flag.StringVar(&Settings.OutputGrpcConfig.AgentID, "output-grpc-agent-id", "", "")
+	flag.StringVar(&Settings.OutputGrpcConfig.Token, "output-grpc-token", "", "")
+	flag.UintVar(&Settings.OutputGrpcConfig.PassiveIDu, "output-grpc-passive-id", 0, "")
 
 	// default values, using for tests
 	Settings.OutputFileConfig.SizeLimit = 33554432

@@ -69,8 +69,33 @@ type Message struct {
 	Stats
 }
 
-// UUID returns the UUID of a TCP request and its response.
 func (m *Message) UUID() []byte {
+	id := make([]byte, 16)
+	pkt := m.packets[0]
+	// check if response or request have generated the ID before.
+	if m.Direction == DirIncoming {
+		binary.BigEndian.PutUint16(id[0:2], pkt.SrcPort)
+		binary.BigEndian.PutUint16(id[2:4], pkt.DstPort)
+		binary.BigEndian.PutUint32(id[4:8], ip2int(pkt.SrcIP))
+		binary.BigEndian.PutUint32(id[8:12], ip2int(pkt.DstIP))
+	} else {
+		binary.BigEndian.PutUint16(id[0:2], pkt.DstPort)
+		binary.BigEndian.PutUint16(id[2:4], pkt.SrcPort)
+		binary.BigEndian.PutUint32(id[4:8], ip2int(pkt.DstIP))
+		binary.BigEndian.PutUint32(id[8:12], ip2int(pkt.SrcIP))
+	}
+	if m.Direction == DirIncoming {
+		binary.BigEndian.PutUint32(id[12:16], pkt.Ack)
+	} else {
+		binary.BigEndian.PutUint32(id[12:16], pkt.Seq)
+	}
+	uuidHex := make([]byte, 32)
+	hex.Encode(uuidHex[:], id[:])
+	return uuidHex
+}
+
+// UUID returns the UUID of a TCP request and its response.
+func (m *Message) UUIDy() []byte {
 	var streamID uint64
 	pckt := m.packets[0]
 
