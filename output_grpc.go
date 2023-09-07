@@ -197,9 +197,11 @@ func (o *GrpcOutput) work() {
 						},
 					},
 				}
-				ss = append(ss, s)
-				ks = append(ks, key)
-				krm[key] = rr
+				if rr.req != nil && rr.rsp != nil {
+					ss = append(ss, s)
+					ks = append(ks, key)
+					krm[key] = rr
+				}
 				if len(ss) >= 100 {
 					err := o.SendMsg(ss)
 					if err != nil {
@@ -269,6 +271,7 @@ func (o *GrpcOutput) PluginWrite(msg *Message) (int, error) {
 		Sport: uint32(sport),
 		Dport: uint32(dport),
 	}
+	log.Printf("meta:%s, sip:%s, dip:%s, sp:%d, dp:%d", string(msg.Meta), flow.Sip, flow.Dip, flow.Sport, flow.Dport)
 
 	if isRequestPayload(msg.Meta) {
 		var rr *RR
