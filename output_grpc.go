@@ -270,6 +270,13 @@ func (o *GrpcOutput) PluginWrite(msg *Message) (int, error) {
 	}
 
 	if isRequestPayload(msg.Meta) {
+		var rr *RR
+		var ok bool
+		if rr, ok = o.m.Get(string(meta[1])); !ok {
+			rr = &RR{
+				flow: flow,
+			}
+		}
 		req, err := http.ReadRequest(buf)
 		if err != nil {
 			log.Printf("read request err:%s id: %s", err, string(meta[1]))
@@ -277,12 +284,11 @@ func (o *GrpcOutput) PluginWrite(msg *Message) (int, error) {
 		}
 		body, _ := io.ReadAll(req.Body)
 		_ = req.Body.Close()
-		o.m.Set(string(meta[1]), &RR{
-			flow:    flow,
-			reqT:    ts,
-			req:     req,
-			reqBody: body,
-		})
+		rr.req = req
+		rr.reqT = ts
+		rr.flow = flow
+		rr.reqBody = body
+		o.m.Set(string(meta[1]), rr)
 	} else {
 		var rr *RR
 		var ok bool
