@@ -202,7 +202,7 @@ func (o *GrpcOutput) work() {
 					ks = append(ks, key)
 					krm[key] = rr
 				}
-				if len(ss) >= 1 {
+				if len(ss) >= 100 {
 					err := o.SendMsg(ss)
 					if err != nil {
 						log.Printf("send data err:%v", err)
